@@ -9,9 +9,7 @@ Usage:
 -- lazy config table
 return {
   -- ...
-  {
-    'matu3ba/lib_buf.nvim', config = function() require('lib_buf').setup({ dev_autocmd = true, }) end,
-  },
+  { 'matu3ba/lib_buf.nvim', config = function() require('lib_buf').setup({ dev_autocmd = true, }) end, },
 }
 
 ```

@@ -1,15 +1,38 @@
 #### Low level library for buffers in neovim ####
 
-Goals: Master buffer to control all buffers. Functions to attach info and
-actions based on info. Storage and load helpers. Markers. Project search.
-Out-of-band text color storage and loader from program output (use shell as runner).
+Goals: Master buffer to control all buffers based on user-annotated dirs.
+Functions to attach info and actions based on info. Storage and load helpers. Markers.
+Project search. Out-of-band text color storage and loader from program output (use shell as runner).
+
+Main problems
+- How to switch between file paths of different projects or same project?
+- How to remain having a reproducible representation of file path buffers and their content?
+  * Shells drawbacks
+    + Neovim terminal reflow is broken, so resizing terminals breaks content
+    + Shells offer not option to capture and store + reload output with colors
+    + Terminal escape codes compromise security
+    + **But** shell syntax is dense to write and there is no portable process
+      alternative yet to replace it.
+  * User changes affecting buffer load order makes relying on buffer handles not feasible
+  * No user control over which file paths should be stored for each project (harpoon)
+
+Main problem
+- No annotating of buffers with info according to user or plugin and
+  enabling logic based on that.
+
+Solutions
+- Use and improve ideas from arcan lash and add user-controllable directories on top.
+- 1 representation for (project) directories
+- 1 representation for file paths relative to (project) directories
+- Customizable buffer storage for process execution results to emulate terminal
+  and conditionally apply colors.
+- Make a library with sane defaults for common directories, files and terminal things
 
 Usage:
 ```lua
--- lazy config table
 return {
   -- ...
-  { 'matu3ba/lib_buf.nvim', config = function() require('lib_buf').setup({ dev_autocmd = true, }) end, },
+  { 'matu3ba/buf.nvim' }
 }
 
 ```
@@ -18,7 +41,7 @@ return {
 local ok_buf, buf = pcall(require, 'buf.nvim')
 if not ok_buf then return end
 
--- TODO something cool
+-- TODO demonstrate implemented use cases
 ```
 
 #### Developing dependencies:

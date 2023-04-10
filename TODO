@@ -1,0 +1,25 @@
+- [x] reading all buffers from table
+- [x] create new buffer, if not existing
+- [x] storage
+- [x] DESIGN.md
+- [x] delay execution until neovim is fully initialized
+- [ ] add cwd to dir
+- [ ] scratch buffer view open (save view context of tab) and closing (restore view context of tab)
+- [ ] user annotations
+      * user examples
+      * representation
+      * writing + reading from and to master buf (via autocommands)
+      * filtered writing + reading from and to master buf (via autocommands)
+      * filtered views
+- [ ] test all functions
+- [ ] test my example configuration (without plugins)
+- [ ] how to handle plugins creating buffers + deleting them etc.
+- [ ] autocmds what things to drop before mks! ses or creating shada files
+- [ ] autocmds for what things to drop on exit
+- [ ] test plugin handling of buffers
+- [ ] test mks and shada
+- [ ] test what things to drop on exit
+- [ ] figure out neovim api for coloring text in buffer in some color
+- [ ] run cli programs + get colored ouput [one-shot programs]
+- [ ] separate output into non-colored file + color codes with indices into non-colored file
+- [ ] job execution history api

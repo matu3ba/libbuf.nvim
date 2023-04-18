@@ -35,13 +35,12 @@ Usage:
 ```lua
 return {
   -- ...
-  { 'matu3ba/buf.nvim' }
+  { 'matu3ba/libbuf.nvim' },
 }
-
 ```
 ```lua
--- buf.nvim
-local ok_buf, buf = pcall(require, 'buf.nvim')
+--! Dependency libbuf.nvim
+local ok_buf, buf = pcall(require, 'libbuf')
 if not ok_buf then return end
 
 -- TODO demonstrate implemented use cases

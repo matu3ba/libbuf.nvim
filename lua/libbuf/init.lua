@@ -43,20 +43,25 @@ end
 ---@param state_table table State table
 ---@param mbuf_h integer Master buffer handle for printing into
 M.default_readwrite_fn = function(state_table, mbuf_h)
-  -- buffer handle, user group, filepath, marker
+  -- print("buffer handle, user group, filepath, marker")
+  -- print(vim.inspect(state_table))
   assert(type(state_table) == 'table')
   assert(type(mbuf_h) == 'number')
   local i = 1
   local mbuf_content_arr = {}
-  mbuf_content_arr[i] = 'bh |ug    |fpa:ma'
+  mbuf_content_arr[i] = 'bh |ug     |fpa:ma'
   i = i + 1
   for _, v in pairs(state_table) do
     if mbuf_h ~= v then
       local bh = state_table['buf_handle']
+      if bh == nil then bh = -1 end
       local ug = state_table['user_group']
+      if ug == nil then ug = 'invalid' end
       local fpa = state_table['filepath']
+      if fpa == nil then fpa = 'invalid' end
       local ma = state_table['marker']
-      local new_line = string.format('%03d|%06s|%s:%s', bh, ug, fpa, ma)
+      if ma == nil then ma = 'invalid' end
+      local new_line = string.format('%03d|%7s|%s:%s', bh, ug, fpa, ma)
       mbuf_content_arr[i] = new_line
       i = i + 1
     end
@@ -75,5 +80,16 @@ M.default_readwrite_fn = function(state_table, mbuf_h)
   -- fp:close()                                                         --DEBUG
   api.nvim_buf_set_lines(mbuf_h, 0, -1, false, mbuf_content_arr)
 end
+
+-- Add cwd to state._dir_storage, if not existing.
+M.addCwd = function()
+  local cwd = vim.loop.cwd()
+  local has_path = state.hasPath(cwd, state._dir_storage)
+  if has_path == false then state.addPath(cwd, state._dir_storage) end
+end
+
+-- Check, if cwwd is in state._dir_storage.
+---@return boolean has_path Answer.
+M.hasCwd = function() return state.hasPath(vim.loop.cwd(), state._dir_storage) end
 
 return M

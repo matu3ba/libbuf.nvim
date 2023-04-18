@@ -2,6 +2,7 @@
 local M = {}
 local api = vim.api
 local util = require 'libbuf.util'
+
 -- Generate master buffer handle based on input.
 ---@param mbuf_path string|nil Optional path to master buffer.
 ---@return integer mbuf_h Master buffer for visualization to user

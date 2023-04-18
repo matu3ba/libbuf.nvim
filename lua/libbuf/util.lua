@@ -13,15 +13,11 @@ M.filepathExists = function(filepath)
 end
 
 -- Function to copy-paste and adjust for using buffer info.
--- TODO: This function does not return all buffers. There may be further
--- hidden ones. For example direct execution after neovim start on empty buffer
--- lists 3 buffers, but ls! lists 5 ones and thereafter execution of this
--- function also.
----@return table bufprops BufferProperties Buffers with properties.
+---@return table bufprops BufferProperties Buffers with properties as []-table.
 M.currentBuffersWithPropertis = function()
   local bufprops = {}
   local bufs = api.nvim_list_bufs()
-  -- local buf_loaded = nvim_buf_is_loaded()
+  -- v is buffer handle
   for _, v in ipairs(bufs) do
     local name = api.nvim_buf_get_name(v)
     local is_loaded = api.nvim_buf_is_loaded(v)
@@ -34,9 +30,9 @@ M.currentBuffersWithPropertis = function()
     local row = { name, is_loaded, ty, is_ro, is_hidden, is_listed }
     bufprops[v] = row
   end
-  for i, v in pairs(bufprops) do
-    print(i, ', ', vim.inspect(v))
-  end
+  -- for i, v in pairs(bufprops) do
+  --   print(i, ', ', vim.inspect(v))
+  -- end
   return bufprops
 end
 

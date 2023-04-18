@@ -3,23 +3,51 @@
 - [x] storage
 - [x] DESIGN.md
 - [x] delay execution until neovim is fully initialized
-- [ ] add cwd to dir
-- [ ] scratch buffer view open (save view context of tab) and closing (restore view context of tab)
+- [x] add cwd to dir
+- [x] absolute minimal non-working base setup is working
 - [ ] user annotations
-      * user examples
-      * representation
-      * writing + reading from and to master buf (via autocommands)
-      * filtered writing + reading from and to master buf (via autocommands)
-      * filtered views
+      * [ ] user examples
+      * [ ] representation
+      * [ ] writing + reading from and to master buf (via autocommands)
+      * [ ] filtered writing + reading from and to master buf (via autocommands)
+      * [ ] filtered views
+      * [ ] autocmds
+- [ ] absolute minimal (2 windows in tab view) scratch buffer view open
+     (save view context of tab) and closing (restore view context of tab) is working
+      * [ ] use dedicated scratch buffer
+      * [ ] vim.api.nvim_win_get_width({nr}) and set and height + getting the
+            window ids of visible tab should get me everything.
+      * [ ] loading and storing into file is working (compression json tooling?)
+      * [ ] forward compatibility with shada + mksession clarified
 - [ ] test all functions
-- [ ] test my example configuration (without plugins)
-- [ ] how to handle plugins creating buffers + deleting them etc.
-- [ ] autocmds what things to drop before mks! ses or creating shada files
-- [ ] autocmds for what things to drop on exit
-- [ ] test plugin handling of buffers
+- [ ] test no config, full config, broken config
+- [ ] directory storage
+      * [ ] representation (scratch, persistent, annotations)
+      * [ ] visualizing
+      * [ ] editing
+- [ ] test coverage evaluation automation
+- [ ] release 0.1 after everything is tested
+- [ ] convention by example: how to handle plugins creating buffers + deleting them etc (hidden and non-hidden)
+- [ ] convention by example: autocmds what things to drop before mks! ses or creating shada files
+- [ ] convention by example: autocmds for what things to drop on exit
 - [ ] test mks and shada
+- [ ] test plugin handling of buffers
 - [ ] test what things to drop on exit
 - [ ] figure out neovim api for coloring text in buffer in some color
 - [ ] run cli programs + get colored ouput [one-shot programs]
+      * posix_openpty, https://devblogs.microsoft.com/commandline/windows-command-line-introducing-the-windows-pseudo-console-conpty/
+        + most likely in Zig
+      * LD_PRELOAD the is_tty call
+      * remove all non-color related ascii escape sequennces
 - [ ] separate output into non-colored file + color codes with indices into non-colored file
+      * vim.hightlight.range
+      * port relevant bits from https://github.com/chrisbra/Colorizer
 - [ ] job execution history api
+- [ ] screenhots
+- [ ] release 0.2 after everything is tested and job api bugs are fixed.
+
+deferred until more users:
+- [ ] neovim/vim PR to store and load tab views from memory
+      * [ ] make screenshots / video how this would look like to sneak in the PR
+- [ ] portability for non luajit users
+      * need more usage data how much we need to scale

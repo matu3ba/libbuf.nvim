@@ -3,16 +3,17 @@ local dev = require 'libbuf.dev'
 local xxh32 = require 'libbuf.luaxxhash'
 
 -- naive directory storage with xxhash->absolute path
--- An more optimized version would use wyhash->absolute path
+-- A more optimized version would use wyhash->absolute path
 M._dir_storage = {}
 
 -- naive file path storage with xxhash->relative path
--- An more optimized version would use wyhash->relative path
+-- A more optimized version would use wyhash->relative path
 M._filepath_storage = {}
 
 -- Current master buffer handle omitted from printing.
 M._mbuf_h = -1
 -- Current state including annotations of all buffer handlers
+-- TODO: YAGNI, only necessary info.
 M._mbuf = {}
 -- Last written content to file
 M._written_mbuf = {}
@@ -44,7 +45,7 @@ M.addPath = function(path, pathtable)
   dev.log.trace('added to pathtable ' .. path)
 end
 
--- Check, if path are in state._dir_storage or state._filepath_storage
+-- Check, if path is in state._dir_storage or state._filepath_storage
 ---@param path string directory or filepath
 ---@param pathtable table path table [assumed to be state._dir_storage or state._filepath_storage]
 ---@return boolean has_path Answer.

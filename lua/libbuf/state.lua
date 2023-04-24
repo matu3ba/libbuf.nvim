@@ -8,12 +8,12 @@ M._dir_storage = {}
 
 -- naive file path storage with xxhash->relative path
 -- A more optimized version would use wyhash->relative path
+-- Filepaths are always relative to a storage directory.
 M._filepath_storage = {}
 
 -- Current master buffer handle omitted from printing.
 M._mbuf_h = -1
 -- Current state including annotations of all buffer handlers
--- TODO: YAGNI, only necessary info.
 M._mbuf = {}
 -- Last written content to file
 M._written_mbuf = {}
@@ -21,7 +21,7 @@ M._written_mbuf = {}
 M._write_mbuf_path = nil
 
 -- Dump state into given path
----@param dump_filepath string The filepath to oveerwrite the content into.
+---@param dump_filepath string The filepath to overwrite the content into.
 M.dumpState = function(dump_filepath)
   local fp = assert(io.open(dump_filepath, 'w'))
   fp:write 'dir_storage\n'

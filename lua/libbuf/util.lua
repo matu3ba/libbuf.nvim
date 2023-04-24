@@ -1,5 +1,6 @@
 --! Utility functions not affecting state of the application.
 local Path = require 'plenary.path'
+local dev = require 'libbuf.dev'
 
 local M = {}
 local api = vim.api
@@ -17,22 +18,26 @@ end
 M.currentBuffersWithPropertis = function()
   local bufprops = {}
   local bufs = api.nvim_list_bufs()
-  -- v is buffer handle
-  for _, v in ipairs(bufs) do
-    local name = api.nvim_buf_get_name(v)
-    local is_loaded = api.nvim_buf_is_loaded(v)
-    local ty = vim.bo[v].buftype
-    local is_ro = vim.bo[v].readonly
-    local is_hidden = vim.bo[v].bufhidden
-    local is_listed = vim.bo[v].buflisted
-    -- print( i, ', ', v, 'name:', name, 'loaded:', is_loaded, 'ty:', ty, 'ro:', is_ro, 'is_hidden:', is_hidden, 'is_listed:', is_listed)
-    -- readonly, bufhidden, buflisted
-    local row = { name, is_loaded, ty, is_ro, is_hidden, is_listed }
-    bufprops[v] = row
+  for _, buf_h in ipairs(bufs) do
+    local filepath = api.nvim_buf_get_name(buf_h)
+    local is_hidden = vim.bo[buf_h].bufhidden
+    local is_listed = vim.bo[buf_h].buflisted
+    local is_loaded = api.nvim_buf_is_loaded(buf_h)
+    local is_modified = vim.bo[buf_h].modified
+    local is_ro = vim.bo[buf_h].readonly
+    local ty = vim.bo[buf_h].buftype
+    local buf_table = {}
+    buf_table["buf_h"] = buf_h
+    buf_table["filepath"] = filepath
+    buf_table["is_hidden"] = is_hidden
+    buf_table["is_listed"] = is_listed
+    buf_table["is_loaded"] = is_loaded
+    buf_table["is_modified"] = is_modified
+    buf_table["is_ro"] = is_ro
+    buf_table["ty"] = ty
+    bufprops[buf_h] = buf_table
+    dev.log.trace('currentBuffersWithPropertis():  bufprops[' .. tostring(buf_h) .. '] =' .. vim.inspect(buf_table))
   end
-  -- for i, v in pairs(bufprops) do
-  --   print(i, ', ', vim.inspect(v))
-  -- end
   return bufprops
 end
 

@@ -5,9 +5,10 @@
 - [x] delay execution until neovim is fully initialized
 - [x] add cwd to dir
 - [x] absolute minimal non-working base setup is working
+- [ ] basic operations (add dir, add file, remove dir (incl. transitive files), remove file)
 - [ ] user annotations
-      * [ ] user examples
-      * [ ] representation
+      * [ ] user examples (fill dirs, remove dirs
+      * [ ] representation (redraw, adding info, dense draw)
       * [ ] writing + reading from and to master buf (via autocommands)
       * [ ] filtered writing + reading from and to master buf (via autocommands)
       * [ ] filtered views

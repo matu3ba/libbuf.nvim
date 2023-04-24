@@ -1,10 +1,11 @@
---! Copied from https://github.com/ThePrimeagen/harpoon
+--! Cleaned up from https://github.com/ThePrimeagen/harpoon
+-- luacheck: globals vim
 
 -- Don't include this file, we should manually include it via
--- require("harpoon.dev").reload();
+-- require("libbuf.dev").reload();
 --
 -- A quick mapping can be setup using something like:
--- :nmap <leader>rr :lua require("harpoon.dev").reload()<CR>
+-- :nmap <leader>rr :lua require("libbuf.dev").reload()<CR>
 local M = {}
 
 function M.reload() require('plenary.reload').reload_module 'libbuf' end
@@ -21,27 +22,10 @@ local function set_log_level()
   return 'warn' -- default, if user hasn't set to one from log_levels
 end
 
--- No idea why below code is necessary
-
 local log_level = set_log_level()
 M.log = require('plenary.log').new {
   plugin = 'libbuf',
   level = log_level,
 }
-
-local log_key = os.time()
-
-local function override(key)
-  local fn = M.log[key]
-  ---@diagnostic disable
-  M.log[key] = function(...) fn(log_key, ...) end
-  ---@diagnostic enable
-end
-
-for _, v in pairs(log_levels) do
-  override(v)
-end
-
-function M.get_log_key() return log_key end
 
 return M

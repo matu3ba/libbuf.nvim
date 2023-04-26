@@ -1,4 +1,5 @@
 --! Helpers to store and load tab window settings.
+-- Deferred until more users, since it requires aweful code or additions to core.
 
 local M = {}
 local api = vim.api

@@ -1,6 +1,8 @@
 --! Cleaned up from https://github.com/ThePrimeagen/harpoon
 -- luacheck: globals vim
 
+-- TODO delete and replace. Then upstream own more logspace-efficient solution.
+
 -- Don't include this file, we should manually include it via
 -- require("libbuf.dev").reload();
 --

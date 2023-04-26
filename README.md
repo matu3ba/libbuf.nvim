@@ -155,3 +155,13 @@ add_cmd('CheckTests' function()
 end, {})
 ```
 So one is forced to use visual inspection of the CLI output instead.
+
+5. Watch out for string table being dict and requiring iteration via `pairs` or
+returning no output otherwise. On the contrary, []type is a vector with continuous
+indices (and unobservable layout), which should be iterated via `ipairs`.
+
+6. Write your own logging, because plenary.log gobbles the command line and provides
+no customizable format.
+
+7. `E5113: Error while calling lua chunk <filepath> attempt to index upvalue 'luafilename' (a boolean value)`
+is most likely cause by missing `return M`.

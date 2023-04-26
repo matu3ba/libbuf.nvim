@@ -7,8 +7,8 @@
 - [x] absolute minimal non-working base setup is working
 - [ ] basic operations (add dir, add file, remove dir (incl. transitive files), remove file)
 - [ ] user annotations
-      * [ ] user examples (fill dirs, remove dirs
-      * [ ] representation (redraw, adding info, dense draw)
+      * [x] user examples (fill dirs, remove dirs)
+      * [ ] representation (dense draw, redraw, adding info)
       * [ ] writing + reading from and to master buf (via autocommands)
       * [ ] filtered writing + reading from and to master buf (via autocommands)
       * [ ] filtered views

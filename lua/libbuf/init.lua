@@ -1,7 +1,6 @@
 --! Setup code with default examples.
 local state = require 'libbuf.state'
 local dev = require 'libbuf.dev'
-local Path = require 'plenary.path'
 
 local M = {}
 local api = vim.api
@@ -114,7 +113,7 @@ M.default_readwrite_fn = function(state_table, mbuf_h)
   dev.log.trace('default_readwrite_fn():' .. vim.inspect(state_table))
   local i = 1
   local mbuf_content_arr = {}
-  mbuf_content_arr[i] = 'handle|ty | group     |filepath:line:column'
+  mbuf_content_arr[i] = 'handle|ty |group     |filepath:line:column'
   i = i + 1
   for v_i, buf_table in pairs(state_table) do
     dev.log.trace(tostring(v_i) .. ': ' .. vim.inspect(buf_table))
@@ -139,68 +138,5 @@ M.default_readwrite_fn = function(state_table, mbuf_h)
   api.nvim_buf_set_lines(mbuf_h, 0, -1, false, mbuf_content_arr)
 end
 
--- Add cwd to state._dir_storage, if not existing. Ok (0) or failure (1),
--- if directory already existing.
----@return integer was_added Answer.
-M.addDir = function()
-  local cwd = vim.loop.cwd()
-  local has_path = state.hasPath(cwd, state._dir_storage)
-  if has_path == true then
-    return 1
-  else
-    state.addPath(cwd, state._dir_storage)
-    return 0
-  end
-end
-
--- Check, if cwd is in state._dir_storage.
----@return boolean has_path Answer.
-M.hasCwd = function() return state.hasPath(vim.loop.cwd(), state._dir_storage) end
-
--- Add filepath to state._filepath_storage, if not existing. Fails, if no relative
--- filepath given (1), pwd not in state._dir_storage (2) or file already existing (3).
----@return integer was_added Answer.
-M.addFile = function(filepath)
-  if type(filepath) ~= string then return 1 end
-  local p_in = Path:new { filepath }
-  local p_rel = p_in:make_relative()
-  if p_in ~= p_rel then
-    dev.log.trace('p_in != p_rel: ' .. tostring(p_in) .. ' ' .. tostring(p_rel))
-    return 1
-  end
-  if M.hasCwd() == false then
-    dev.log.trace(vim.loop.cwd() .. ' not in state._dir_storage')
-    return 2
-  end
-  if state.hasPath(filepath, state._filepath_storage) then
-    dev.log.trace(filepath .. ' already in state._filepath_storage')
-    return 3
-  end
-  state.addPath(filepath, state._filepath_storage)
-  return 0
-end
-
--- Add directory (if necessary) and filepath to state._dir_storage and
--- state._filepath_storage. Fails, if no relative filepath given (1) or file
--- already existing (2).
----@return integer was_added Answer.
-M.addDirAndFile = function(filepath)
-  if type(filepath) ~= string then return 1 end
-  local p_in = Path:new { filepath }
-  local p_rel = p_in:make_relative()
-  if p_in ~= p_rel then
-    dev.log.trace('p_in != p_rel: ' .. tostring(p_in) .. ' ' .. tostring(p_rel))
-    return 1
-  end
-  if state.hasPath(filepath, state._filepath_storage) then
-    dev.log.trace(filepath .. ' already in state._filepath_storage')
-    return 2
-  end
-  if M.hasCwd() == false then
-    state.addPath(vim.loop.cwd(), state._dir_storage)
-  end
-  state.addPath(filepath, state._filepath_storage)
-  return 0
-end
 
 return M

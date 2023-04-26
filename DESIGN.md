@@ -23,4 +23,4 @@ the prefix path is "wasted", but this sounds like an acceptable tradeoff.
 
 2. Another problem is that pruning files requires walking through all paths
 and so does re-indexing, but this sounds okay for now as long as the usage
-references are not stored dezentral.
+references are not stored decentral.

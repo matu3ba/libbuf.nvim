@@ -1,16 +1,17 @@
+--! Fast index for file annotations. See ./DESIGN.md for details.
 local M = {}
 local dev = require 'libbuf.dev'
 local xxh32 = require 'libbuf.luaxxhash'
 
 -- naive directory storage with xxhash->absolute path
 -- A more optimized version would use wyhash->absolute path
----@type table
+---@type table Contains abs_dirpath_hash->abs_dirpath
 M._dir_storage = {}
 
 -- naive file path storage with xxhash->relative path
 -- A more optimized version would use wyhash->relative path
 -- Filepaths are always relative to a storage directory.
----@type table
+---@type table Contains rel_filepath_hash->rel_filepath
 M._filepath_storage = {}
 
 -- Current master buffer handle omitted from printing.
@@ -41,11 +42,11 @@ M.dumpState = function(dump_filepath)
   fp:close()
 end
 
--- Add path to state._dir_storage xor state._filepath_storage
+-- Insert path to state._dir_storage xor state._filepath_storage
 -- Does not check, if item is existing in array.
 ---@param path string directory or filepath
 ---@param pathtable table path table [assumed to be state._dir_storage or state._filepath_storage]
-M.addPath = function(path, pathtable)
+M.insertPath = function(path, pathtable)
   local hash = xxh32(path)
   pathtable[hash] = path
   dev.log.trace('added to ' .. tostring(pathtable) .. path .. ' with hash ' .. tostring(hash))
@@ -68,6 +69,24 @@ end
 M.hasPath = function(path, pathtable)
   local hash = xxh32(path)
   return pathtable[hash] ~= nil
+end
+
+-- Insert the by abs_dirpath owned rel_filepath into the table or creates a new
+-- one for abs_dirpath
+---@param abs_dirpath string directory or filepath
+---@param rel_filepath string path table [assumed to be state._dir_storage or state._filepath_storage]
+---@return integer status Ok (0) or EntryAlreadyExist (1)
+M.insertDirToFile = function(abs_dirpath, rel_filepath)
+  local abs_dirpath_hash = xxh32(abs_dirpath)
+  local rel_filepath_hash = xxh32(rel_filepath)
+  if M._dirtofilepaths_storage[abs_dirpath_hash] == nil then
+    M._dirtofilepaths_storage[abs_dirpath_hash] = {}
+  end
+  if M._dirtofilepaths_storage[abs_dirpath_hash][rel_filepath_hash] ~= nil then
+    return 1
+  end
+  M._dirtofilepaths_storage[abs_dirpath_hash][rel_filepath_hash] = rel_filepath_hash
+  return 0
 end
 
 return M

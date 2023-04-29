@@ -5,7 +5,14 @@
 - [x] delay execution until neovim is fully initialized
 - [x] add cwd to dir
 - [x] absolute minimal non-working base setup is working
-- [ ] basic operations (add dir, add file, remove dir (incl. transitive files), remove file)
+- [x] basic operations (add dir, add file, remove dir, remove file)
+- [x] define bidirectional lookup tree structure and annotation structure
+- [ ] operations also track transitive dependencies [dir1->{file1,..}]
+      * common paths are resolved (./..)
+      * cleanup operations from transitive dependencies
+      * simple and more complex test cases to ensure proper cleanup
+- [ ] unify current annotation on buffer handles with dependency system
+- [ ] cleanup for non-existing dirs and files
 - [ ] user annotations
       * [x] user examples (fill dirs, remove dirs)
       * [ ] representation (dense draw, redraw, adding info)
@@ -40,7 +47,7 @@
         + most likely in Zig
       * LD_PRELOAD the is_tty call
       * remove all non-color related ascii escape sequennces
-- [ ] separate output into non-colored file + color codes with indices into non-colored file
+- [ ] use terminal escape codes for the coloring in neovim
       * vim.hightlight.range
       * port relevant bits from https://github.com/chrisbra/Colorizer
 - [ ] job execution history api

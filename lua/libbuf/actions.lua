@@ -68,16 +68,16 @@ M.currentBuffersWithPropertis = function()
   return bufprops
 end
 
--- Add cwd to state._dir_storage, if not existing. Ok (0) or failure (1),
--- if directory already existing.
----@return integer was_added Answer.
-M.addDir = function()
-  local cwd = vim.loop.cwd()
-  local has_path = state.hasPath(cwd, state._dir_storage)
+-- Insert path to state._dir_storage, if not existing.
+---@param any_dirpath string absolute or relative path
+---@return integer was_added Ok (0), DirectoryAlreadyExisting (1).
+M.addDir = function(any_dirpath)
+  local abs_path = Path:new{any_dirpath}:absolute()
+  local has_path = state.hasPath(abs_path, state._dir_storage)
   if has_path == true then
     return 1
   else
-    state.addPath(cwd, state._dir_storage)
+    state.insertPath(abs_path, state._dir_storage)
     return 0
   end
 end
@@ -86,54 +86,61 @@ end
 ---@return boolean has_path Answer.
 M.hasCwd = function() return state.hasPath(vim.loop.cwd(), state._dir_storage) end
 
--- Add filepath to state._filepath_storage, if not existing. Fails, if no relative
--- filepath given (1), pwd not in state._dir_storage (2) or file already existing (3).
----@param filepath string
+-- Add rel_filepath to state._filepath_storage, if not existing. Fails, if no relative
+-- rel_filepath given (1), pwd not in state._dir_storage (2) or file already existing (3).
+---@param any_dirpath string absolute or relative path
+---@param rel_filepath string
 ---@return integer was_added Answer.
-M.addFile = function(filepath)
-  if type(filepath) ~= "string" then return 1 end
-  local p_in = Path:new { filepath }
-  local p_rel = p_in:make_relative()
-  assert(type(p_rel) == "string")
-  if filepath ~= p_rel then
-    dev.log.trace("filepath != p_rel: '" .. filepath .. "' '" .. p_rel .. "'")
+M.insertFile = function(any_dirpath, rel_filepath)
+  if type(any_dirpath) ~= "string" then return 1 end
+  if type(rel_filepath) ~= "string" then return 1 end
+  local abs_dirpath = Path:new { rel_filepath }:absolute()
+  -- TODO check that abs_dirpath actually exists
+  local checkrel_filepath = Path:new { rel_filepath }:make_relative()
+  assert(type(checkrel_filepath) == "string")
+
+  if rel_filepath ~= checkrel_filepath then
+    dev.log.trace("rel_filepath != checkrel_filepath: '" .. rel_filepath .. "' '" .. checkrel_filepath .. "'")
     return 1
   end
-  if M.hasCwd() == false then
-    dev.log.trace(vim.loop.cwd() .. ' not in state._dir_storage')
+  -- TODO check that file abs_dirpath/rel_filepath actually exists
+  if state.hasPath(abs_dirpath, state._dir_storage) == false then
+    dev.log.trace(abs_dirpath .. ' not in state._dir_storage')
     return 2
   end
-  if state.hasPath(filepath, state._filepath_storage) then
-    dev.log.trace(filepath .. ' already in state._filepath_storage')
+  if state.hasPath(rel_filepath, state._filepath_storage) then
+    dev.log.trace(rel_filepath .. ' already in state._filepath_storage')
     return 3
   end
-  state.addPath(filepath, state._filepath_storage)
+  state.insertPath(rel_filepath, state._filepath_storage)
+  state.insertDirToFile(abs_dirpath, rel_filepath)
   return 0
 end
 
--- Add directory (if necessary) and filepath to state._dir_storage and
--- state._filepath_storage. Fails, if no relative filepath given (1) or file
+-- Add directory (if necessary) and rel_filepath to state._dir_storage and
+-- state._filepath_storage. Fails, if no relative rel_filepath given (1) or file
 -- already existing (2).
----@param filepath string
----@return integer was_added Answer.
-M.addDirAndFile = function(filepath)
-  if type(filepath) ~= "string" then return 1 end
-  local p_in = Path:new { filepath }
-  local p_rel = p_in:make_relative()
-  assert(type(p_rel) == "string")
-  if filepath ~= p_rel then
-    dev.log.trace("filepath != p_rel: '" .. filepath .. "' '" .. p_rel .. "'")
-    return 1
-  end
-  if state.hasPath(filepath, state._filepath_storage) then
-    dev.log.trace(filepath .. ' already in state._filepath_storage')
-    return 2
-  end
-  if M.hasCwd() == false then
-    state.addPath(vim.loop.cwd(), state._dir_storage)
-  end
-  state.addPath(filepath, state._filepath_storage)
-  return 0
-end
+----@param rel_filepath string
+----@return integer was_added Answer.
+-- M.insertDirAndFile = function(rel_filepath)
+--   if type(rel_filepath) ~= "string" then return 1 end
+--   local p_in = Path:new { rel_filepath }
+--   local p_rel = p_in:make_relative()
+--   assert(type(p_rel) == "string")
+--   if rel_filepath ~= p_rel then
+--     dev.log.trace("rel_filepath != p_rel: '" .. rel_filepath .. "' '" .. p_rel .. "'")
+--     return 1
+--   end
+--   if state.hasPath(rel_filepath, state._filepath_storage) then
+--     dev.log.trace(rel_filepath .. ' already in state._filepath_storage')
+--     return 2
+--   end
+--   -- TODO check that file abs_dirpath/rel_filepath actually exists
+--   if M.hasCwd() == false then
+--     state.insertPath(vim.loop.cwd(), state._dir_storage)
+--   end
+--   state.insertPath(rel_filepath, state._filepath_storage)
+--   return 0
+-- end
 
 return M

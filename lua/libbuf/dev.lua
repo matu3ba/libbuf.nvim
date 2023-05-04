@@ -28,6 +28,16 @@ local log_level = set_log_level()
 M.log = require('plenary.log').new {
   plugin = 'libbuf',
   level = log_level,
+  use_console = false,
+  highlights = false,
+  fmt_msg = function(is_console, _, src_path, src_line, msg)
+    local srcinfo = src_path .. ":" .. src_line
+    if is_console then
+      return string.format("%s: %s", srcinfo, msg)
+    else
+      return string.format("%s: %s\n", srcinfo, msg)
+    end
+  end,
 }
 
 return M

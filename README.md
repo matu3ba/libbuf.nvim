@@ -165,3 +165,50 @@ no customizable format.
 
 7. `E5113: Error while calling lua chunk <filepath> attempt to index upvalue 'luafilename' (a boolean value)`
 is most likely cause by missing `return M`.
+
+8. If you have non-oneshot or non-trivial applications like telescope.nvim,
+design your library/plugin to use dedicated memory tracing.
+This means to define run sequences, ideally with fuzzing of your api, and compare collected
+memory usage with expected ones.
+Use neovim with only the minimal plugins needed and ideally with a long and randomly,
+but reproducible sequence of api calls, and call
+A simplified script would look like
+```lua
+local time_start = os.time()
+local mem_KBytes = collectgarbage("count") -- memory currently occupied by Lua
+local CPU_seconds = os.clock()                  -- CPU time consumed
+local runtime_seconds = os.time() - time_start  -- "wall clock" time elapsed
+print(mem_KBytes, CPU_seconds, runtime_seconds) -- prints 24.0205078125  5.000009  5
+-- api call 1
+local mem_KBytes = collectgarbage("count") -- memory currently occupied by Lua
+local CPU_seconds = os.clock()                  -- CPU time consumed
+local runtime_seconds = os.time() - time_start  -- "wall clock" time elapsed
+print(mem_KBytes, CPU_seconds, runtime_seconds) -- prints 24.0205078125  5.000009  5
+-- function to compare with expected deviation
+-- api call 2
+-- ..
+```
+Unfortunately, plenary.nvim has not yet example code for these kind of applications and the
+[solution by tarantool is complex](https://github.com/tarantool/luajit/blob/0cfc06f8be66af0b30072db5233eda6b13de2e09/tools/memprof.lua).
+
+9. Adjust the default logger of plenary. Using corrrectly `debug.getinfo` is tricky.
+Reasonable settings, if accurate timings are not needed and absolute paths are wanted, are
+```lua
+M.log = require('plenary.log').new {
+  plugin = 'libbuf',
+  level = log_level,
+  use_console = false,
+  highlights = false,
+  -- might not be upstreamed yet
+  fmt_msg = function(is_console, mode_name,, src_path, src_line, msg)
+    local srcinfo = src_path .. ":" .. src_line
+    if is_console then
+      return string.format("%s: %s", lineinfo, msg)
+    else
+      return string.format("%s: %s\n", lineinfo, msg)
+    end
+  end,
+}
+```
+
+10. Use case stable and named buffer for [rip]grep results TODO

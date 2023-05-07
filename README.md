@@ -3,9 +3,9 @@
 wip todo. see ./TODO and my dotfiles.
 
 Goals: Master buffer to control all buffers based on user-annotated directories.
-Functions to attach info and actions based on info. Storage and load helpers. Markers.
-Project search. Out-of-band text color storage and loader from program output.
-Fake shell as runner based on plenary job. Buffer colorizer from terminal escape codes.
+Functions to attach info and actions based on info. Storage and load helpers: Markers.
+Project search. Text color storage and loader from program output.
+Constrainable runner based on plenary job. Buffer colorizer from terminal escape codes.
 
 Main problems
 - How to switch between file paths of different projects or same project?
@@ -211,4 +211,28 @@ M.log = require('plenary.log').new {
 }
 ```
 
-10. Use case stable and named buffer for [rip]grep results TODO
+10. One-line flat table printing: `table.foreach(parts, print)`
+
+11. One-line [] array insertion: `array[#array+1]=value`
+
+12. Plenary and ripgrep have surprisingly annoying behavior, so the following
+does not work
+```lua
+local Job = require("plenary.job")
+Job:new({
+  command = "rg",
+  args = { "test" },
+  on_stdout = vim.schedule_wrap(function(_, data)
+    if not data or data == "" then return end
+    vim.api.nvim_buf_set_lines(0, -1, -1, false, { data })
+  end),
+}):sync()
+```
+and neither setting `cwd = vim.loop.cwd()`.
+
+13. on_stdout with `vim.schedule_wrap` requires to use it at the top level, since
+callbacks must be wrapped at once. Neovim does not warn on incorrect usage and
+silently does nothing in that case.
+
+14. Telescope simplifies the indirection between 1. input history, 2. input, 3. path
+and 4. results.

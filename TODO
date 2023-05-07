@@ -7,6 +7,9 @@
 - [x] absolute minimal non-working base setup is working
 - [x] basic operations (add dir, add file, remove dir, remove file)
 - [x] define bidirectional lookup tree structure and annotation structure
+- [x] finish search for buffer handle from criteria
+- [x] first use case: simple searcher including history tracking
+      * telescope solves indirection better, but history is not a file
 - [ ] operations also track transitive dependencies [dir1->{file1,..}]
       * common paths are resolved (./..)
       * cleanup operations from transitive dependencies

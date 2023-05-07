@@ -1,8 +1,6 @@
 --! Cleaned up from https://github.com/ThePrimeagen/harpoon
 -- luacheck: globals vim
 
--- TODO delete and replace. Then upstream own more logspace-efficient solution.
-
 -- Don't include this file, we should manually include it via
 -- require("libbuf.dev").reload();
 --
@@ -30,14 +28,16 @@ M.log = require('plenary.log').new {
   level = log_level,
   use_console = false,
   highlights = false,
-  fmt_msg = function(is_console, _, src_path, src_line, msg)
-    local srcinfo = src_path .. ":" .. src_line
-    if is_console then
-      return string.format("%s: %s", srcinfo, msg)
-    else
-      return string.format("%s: %s\n", srcinfo, msg)
-    end
-  end,
+  -- pending upstream prs https://github.com/nvim-lua/plenary.nvim/pull/486 + 487
+  -- outfile = string.format("%s/%s.log", vim.api.nvim_call_function("stdpath", { "data" }), 'libbuf'),
+  -- fmt_msg = function(is_console, _, src_path, src_line, msg)
+  --   local srcinfo = src_path .. ":" .. src_line
+  --   if is_console then
+  --     return string.format("%s: %s", srcinfo, msg)
+  --   else
+  --     return string.format("%s: %s\n", srcinfo, msg)
+  --   end
+  -- end,
 }
 
 return M
